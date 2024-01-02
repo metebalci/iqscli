@@ -42,4 +42,4 @@ ibm_brisbane ONLINE (13 jobs)
 ## Changes
 
 0.2:
-    - first pypi release
+- first pypi release
