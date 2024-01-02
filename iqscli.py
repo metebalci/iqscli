@@ -143,9 +143,49 @@ def backends(argv):
 def jobs(argv):
     from qiskit_ibm_runtime import QiskitRuntimeService
 
+    parser.add_argument('--limit',
+                        help='number of jobs in a page',
+                        type=int,
+                        default=10)
+
+    parser.add_argument('--page',
+                        help='page number',
+                        type=int,
+                        default=0)
+
+    parser.add_argument('--backend-name',
+                        help='backend name',
+                        default=None)
+
+    parser.add_argument('--show-not-pending',
+                        help='show not queued or running but done, cancelled and error',
+                        action='store_true',
+                        default=True)
+
+    parser.add_argument('--program-id',
+                        help='filter by program id',
+                        default=None)
+
+    parser.add_argument('--instance',
+                        help='filter by instance (hub/group/project)',
+                        default=None)
+
     args = parser.parse_args(args=argv)
 
+    jobs = QiskitRuntimeService().jobs(limit=args.limit,
+                                       skip=args.limit * args.page,
+                                       backend_name=args.backend_name,
+                                       pending=not args.show_not_pending,
+                                       program_id=args.program_id,
+                                       instance=args.instance,
+                                       descending=True)
 
+    for j in jobs:
+        print('%s %s %s %s %s' % (j.job_id(),
+                                  j.backend().name,
+                                  j.program_id,
+                                  j.status().name,
+                                  j.creation_date.strftime('%Y%m%d%H%M%S%f')))
 
 def main_help():
     print()

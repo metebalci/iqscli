@@ -39,7 +39,19 @@ ibm_brisbane ONLINE (13 jobs)
   meas_kernels: hw_qmfk
 ```
 
+Show jobs:
+
+```
+$ iqscli jobs
+cma3f8oiidfp3m905ft0 ibmq_qasm_simulator sampler DONE 20240102171947812375
+cma3688iidfp3m904dq0 ibmq_qasm_simulator sampler DONE 20240102170033755981
+cma32c6879ps6bbv1mb0 ibmq_qasm_simulator sampler DONE 20240102165216597386
+```
+
 ## Changes
+
+0.3:
+- jobs command added
 
 0.2:
 - first pypi release
