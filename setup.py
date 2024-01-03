@@ -9,7 +9,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='iqscli',
-    version='0.3',
+    version='0.4',
     description='iqscli is an unofficial CLI for IBM Quantum Systems',
     long_description=long_description,
     long_description_content_type='text/markdown',

@@ -21,33 +21,80 @@
 #
 
 import argparse
+import os
 import sys
 
+from qiskit_ibm_runtime import QiskitRuntimeService
+
 from qiskit_ibm_runtime.accounts.exceptions import AccountNotFoundError
+from qiskit_ibm_runtime.accounts.exceptions import AccountAlreadyExistsError
+from qiskit import QiskitError
 
-parser = argparse.ArgumentParser()
-
-def save_account(argv):
-    from qiskit_ibm_runtime import QiskitRuntimeService
-
+def get_parser(channel_required=False):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--account-name',
+                        help='account name',
+                        default=None)
     parser.add_argument('--channel',
                         help='IBM Quantum System channel',
                         choices=['ibm_quantum', 'ibm_cloud'],
-                        required=True)
+                        default=None,
+                        required=channel_required)
+    return parser
+
+def get_service(args):
+    service = QiskitRuntimeService(name=args.account_name,
+                                   channel=args.channel)
+
+    account = service.active_account()
+
+    print('%s @ %s' % (account['instance'],
+                       account['channel']))
+
+    return service
+
+def saved_accounts(args):
+    accounts = QiskitRuntimeService.saved_accounts()
+    name_maxlen = max([len(x) for x in accounts.keys()])
+    name_format = '%%-%ds' % name_maxlen
+    channel_maxlen = max([len(x['channel']) for x in accounts.values()])
+    channel_format = '%%-%ds' % channel_maxlen
+    for (k, v) in accounts.items():
+        print(name_format % k, end='')
+        print(' @ ', end='')
+        print(channel_format % v['channel'], end='')
+        print(' = %s' % v['instance'])
+
+def delete_account(argv):
+    parser = get_parser()
+    args = parser.parse_args(args=argv)
+    QiskitRuntimeService.delete_account(channel=args.channel,
+                                        name=args.account_name)
+
+def save_account(argv):
+    parser = get_parser(channel_required=True)
 
     parser.add_argument('--token',
                         help='IBM Cloud API key',
-                        required=True,
-                        default=False)
+                        required=True)
 
     parser.add_argument('--instance',
                         help='hub/group/project or CRN',
-                        default=None)
+                        required=True)
 
     parser.add_argument('--set-as-default',
                         help='set the account as default',
                         action='store_true',
                         default=False)
+
+    parser.add_argument('--overwrite',
+                        help='update the saved credentials',
+                        action='store_true',
+                        default=False)
+
+    parser.add_argument('--channel-strategy',
+                        help='set the error mitigation strategy',
+                        default=None)
 
     args = parser.parse_args(args=argv)
 
@@ -55,16 +102,12 @@ def save_account(argv):
                                       token=args.token,
                                       instance=args.instance,
                                       name=args.account_name,
-                                      set_as_default=args.set_as_default)
-
-def saved_accounts(args):
-    from qiskit_ibm_runtime import QiskitRuntimeService
-
-    for (k, v) in QiskitRuntimeService.saved_accounts().items():
-        print('%s -> %s' % (k, v['channel']))
+                                      set_as_default=args.set_as_default,
+                                      channel_strategy=args.channel_strategy,
+                                      overwrite=args.overwrite)
 
 def backends(argv):
-    from qiskit_ibm_runtime import QiskitRuntimeService
+    parser = get_parser()
 
     parser.add_argument('--sim',
                         help='only show simulators',
@@ -95,7 +138,8 @@ def backends(argv):
     elif args.real:
         filterfn = lambda x:not x.simulator
 
-    service = QiskitRuntimeService(name=args.account_name)
+    service = get_service(args)
+
     backends = sorted(service.backends(filters=filterfn),
                       key=lambda x:x.name)
 
@@ -141,7 +185,7 @@ def backends(argv):
             print()
 
 def jobs(argv):
-    from qiskit_ibm_runtime import QiskitRuntimeService
+    parser = get_parser()
 
     parser.add_argument('--limit',
                         help='number of jobs in a page',
@@ -172,13 +216,15 @@ def jobs(argv):
 
     args = parser.parse_args(args=argv)
 
-    jobs = QiskitRuntimeService().jobs(limit=args.limit,
-                                       skip=args.limit * args.page,
-                                       backend_name=args.backend_name,
-                                       pending=not args.show_not_pending,
-                                       program_id=args.program_id,
-                                       instance=args.instance,
-                                       descending=True)
+    service = get_service(args)
+
+    jobs = service.jobs(limit=args.limit,
+                        skip=args.limit * args.page,
+                        backend_name=args.backend_name,
+                        pending=not args.show_not_pending,
+                        program_id=args.program_id,
+                        instance=args.instance,
+                        descending=True)
 
     for j in jobs:
         print('%s %s %s %s %s' % (j.job_id(),
@@ -203,23 +249,34 @@ def main():
     if len(sys.argv) > 1:
         cmd = sys.argv[1]
         argv = sys.argv[2:]
-        parser.add_argument('--account-name',
-                            help='account name',
-                            default=None)
         try:
             if cmd == 'backends':
                 backends(argv)
+            elif cmd == 'delete-account':
+                delete_account(argv)
             elif cmd == 'jobs':
                 jobs(argv)
-            elif cmd == 'save_account':
+            elif cmd == 'save-account':
                 save_account(argv)
-            elif cmd == 'saved_accounts':
+            elif cmd == 'saved-accounts':
                 saved_accounts(argv)
             else:
                 print('unknown command')
                 main_help()
         except AccountNotFoundError:
-            print('unable to find account, use save_account command first and use --account-name if not default')
+            print('ERROR: unable to find an account, use save-account command first and then use --account-name with commands if the acount is not set as default')
+        except AccountAlreadyExistsError:
+            print('ERROR: credentials already exists, use --overwrite to update the file')
+        except QiskitError as e:
+            print('ERROR: QiskitError: %s' % type(e).__name__)
+            print('set iqscli_debug=1 environment variable for stack trace')
+            if os.environ.get('iqscli_debug', False):
+                raise
+        except Exception as e:
+            print('ERROR: Error: %s' % type(e).__name__)
+            print('set iqscli_debug=1 environment variable for stack trace')
+            if os.environ.get('iqscli_debug', False):
+                raise
     else:
         main_help()
 
