@@ -4,11 +4,11 @@ iqscli is an unofficial CLI for IBM Quantum Systems.
 
 **This project has NO connection with IBM. It is my personal project. As of 2024-01-03, I am not employed by IBM and I have no connection with IBM other than having an IBM Quantum and IBM Cloud user account. All information in this repository is acquired from the public documents for example from docs.quantum.ibm.com and cloud.ibm.com/docs.**
 
-## IBM Quantum Systems
+# IBM Quantum Systems
 
 The information in this section is updated on 2024-01-03.
 
-### Channels and Plans
+## Channels and Plans
 
 There are two channels and four plans (two on each channel) to use IBM Quantum Systems. 
 
@@ -33,7 +33,7 @@ IBM Cloud has:
 
 At the moment, the best (free) way to access the simulators is IBM Quantum Open plan or IBM Cloud Lite plan. The best (free) way to access the real IBM Quantum Systems is IBM Quantum Open plan. Thus, IBM Quantum Open plan seems to be the best starting point.
 
-### Instances
+## Instances
 
 The services both on IBM Quantum and IBM Cloud are controlled by instances. An instance is identified by:
 
@@ -44,23 +44,23 @@ When a user is signed up on IBM Quantum, it is assigned to the Open plan, and th
 
 When a Qiskit Runtime instance is created on IBM Cloud, the plan, lite or standard, has to be chosen. When a Qiskit Runtime instance is created, its CRN is displayed on the instance details.
 
-### Quantum Systems
+## Quantum Systems
 
 At the moment, I see the following Eagle based 127-qubit systems in both of my IBM Quantum and IBM Cloud accounts: `ibm_brisbane`, `ibm_kyoto` and `ibm_osaka`. IBM Cloud account also shows a Falcon based 27-qubit system called `ibm_algiers`. 
 
 These are not all the systems. A comprehensive listing can be found in [Compute resources @ IBM Cloud](https://cloud.ibm.com/quantum/resources/systems) and [Compute resources @ IBM Quantum Platform](https://quantum.ibm.com/services/resources?tab=systems).
 
-## Installation
+# Installation
 
 ```
 pip install iqscli
 ```
 
-## Usage
+# Usage
 
 **The account information and the credentials including the token is saved to an open file, it is not encrypted. Thus, it is readable by anyone. On Linux, the credentials file is $HOME/.qiskit/qiskit-ibm.json.**
 
-### save-account, saved-accounts, delete-account
+## save-account, saved-accounts, delete-account
 
 Before using any other command, `save-account` command should be run to save the credentials (API token) for later use. One account can be marked as default with `--set-as-default` and it is used when no `--account-name` or `--channel` is provided with the commands.
 
@@ -85,7 +85,7 @@ $ iqscli saved-accounts
 default-ibm-quantum @ ibm_quantum = ibm-q/open/main
 ```
 
-### backends
+## backends
 
 List all backends:
 
@@ -114,7 +114,7 @@ ibm_brisbane ONLINE (13 jobs)
   meas_kernels: hw_qmfk
 ```
 
-### jobs
+## jobs
 
 Show jobs:
 
@@ -126,7 +126,7 @@ cma3688iidfp3m904dq0 ibmq_qasm_simulator sampler DONE 20240102170033755981
 cma32c6879ps6bbv1mb0 ibmq_qasm_simulator sampler DONE 20240102165216597386
 ```
 
-## Changes
+# Changes
 
 0.4:
 - improvements to existing commands
@@ -136,3 +136,21 @@ cma32c6879ps6bbv1mb0 ibmq_qasm_simulator sampler DONE 20240102165216597386
 
 0.2:
 - first pypi release
+
+# License
+
+SPDX-FileCopyrightText: 2024 Mete Balci
+
+SPDX-License-Identifier: Apache-2.0
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
