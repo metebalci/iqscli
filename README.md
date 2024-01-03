@@ -19,7 +19,7 @@ The credentials (API tokens) on these systems are not the same. Tokens are creat
 
 IBM Quantum has:
 
-- Open Plan: provides a 10 minute monthly access to 127-qubit systems and unlimited access to Simulators. This plan is free.
+- Open Plan: provides a 10 minute monthly access to 127-qubit systems and unlimited access to Simulators. This plan is free at the moemnt (2024-01-03).
 
 - Premium Plan: provides access to both 127-qubit and 27-qubit systems as well as exploratory systems and Simulators and support. This is a paid plan and the price varies.
 
