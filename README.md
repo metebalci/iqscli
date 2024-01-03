@@ -2,7 +2,7 @@
 
 iqscli is an unofficial CLI for IBM Quantum Systems.
 
-*This project has NO connection with IBM. It is my personal project. As of 2024-01-03, I am not employed by IBM and I have no connection with IBM other than having an IBM Quantum and IBM Cloud user account. All information in this repository is acquired from the public documents for example from docs.quantum.ibm.com and cloud.ibm.com/docs.*
+**This project has NO connection with IBM. It is my personal project. As of 2024-01-03, I am not employed by IBM and I have no connection with IBM other than having an IBM Quantum and IBM Cloud user account. All information in this repository is acquired from the public documents for example from docs.quantum.ibm.com and cloud.ibm.com/docs.**
 
 ## IBM Quantum Systems
 
@@ -56,7 +56,7 @@ pip install iqscli
 
 ## Usage
 
-*The account information and the credentials including the token is saved to an open file, it is not encrypted. Thus, it is readable by anyone. On Linux, the credentials file is $HOME/.qiskit/qiskit-ibm.json.*
+**The account information and the credentials including the token is saved to an open file, it is not encrypted. Thus, it is readable by anyone. On Linux, the credentials file is $HOME/.qiskit/qiskit-ibm.json.**
 
 ### save-account, saved-accounts, delete-account
 
